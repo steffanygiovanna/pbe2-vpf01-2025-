@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Cliente{
-  cliente_id String @id @db.VarChar(10)
+  cliente_id Int @id @default(autoincrement())
   nome String @db.VarChar(100)
   bairro String @db.VarChar(200)
   referencia String @db.VarChar(200)
@@ -18,18 +18,30 @@ model Cliente{
   pedido pedido []
 }
 
-model pedido{
-  pedido_id String @id @db.VarChar(100)
-  valor String @db.VarChar(50)
-  data DateTime? @db.Date
-  hora String @db.VarChar(6)
-  cliente_id String
-  cliente Cliente @relation(fields: [cliente_id], references: [cliente_id])
+model Pizzas{
+  Pizza_id Int @id @default(autoincrement())
+  nome String @db.VarChar(100)
+  descricao String @db.VarChar(255)
+  valor String @db.VarChar(10)
+  itens Item[]
 }
 
-model pizzas{
-  pizza_id Int @id @default(autoincrement())
-  nome String @db.VarChar(50)
-  descricao String @db.VarChar(200)
-  valor String @db.VarChar(10)
+model pedido{
+  pedido_id String @id @db.VarChar(100)
+   cliente_id Int
+  valor Decimal? @db.Decimal(10,2)
+  data DateTime? @db.Date
+  cliente Cliente @relation(fields: [cliente_id], references: [cliente_id])
+  itens Item[]
+}
+
+model Item{
+  item_id Int @id @default(autoincrement())
+  pedido_id String
+  pizza_id Int
+  quantidade Int
+  valor Decimal @db.Decimal(10,2) @default(0)
+  sub_total Decimal? 
+  pedido pedido @relation(fields: [pedido_id], references: [pedido_id], onDelete: Cascade)
+  pizza Pizzas @relation(fields: [pizza_id], references: [Pizza_id])
 }
